@@ -24,7 +24,7 @@ app.engine(`handlebars`, exphbs({ defaultLayout: `main` }));
 app.set('view engine', 'handlebars');
 
 //routes
-require(`./routes/routes`)(app);
+require("./routes/routes")(app);
 
 //mongoDB
 const MONGODB_URI = process.env.MONGODB_URI || `mongodb://localhost/mongoHeadlines`;
