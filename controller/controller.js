@@ -1,13 +1,127 @@
-module.exports = {
-  index: (req, res) => {
-      res.render(`index`, {
-          message: `Hello There`,
+const express = require("express");
+const router = express.Router();
+const db = require("../models");
+const request = require("request"); //Makes http calls
+const cheerio = require("cheerio");
+const axios = require("axios");
+
+// router.get("/scrape", function(req, res) {
+//     axios.get("https://www.ign.com/articles").then(function(response) {
+      
+//               var $ = cheerio.load(response.data);
+          
+              
+//               $(".listElmnt-blogItem").each(function(i, element) {
+                
+//                 var result = {};
+          
+//                 // Add the text and href of every link, and save them as properties of the result object
+//                 result.title = $(element).children(".listElmnt-storyHeadline").text();
+//                 result.link = $(element).children(".listElmnt-storyHeadline").attr("href");
+//                 result.blurb = $(element).children("p").text();
+          
+//                 // Create a new Article using the `result` object built from scraping
+//                 db.Article.create(result)
+//                   .then(function(dbArticle) {
+//                     var hbsArticleObject = {
+//                         articles: dbArticle
+//                     };
+                    
+//                     res.render("index", hbsArticleObject);
+//                     console.log(hbsArticleObject);
+//                     // View the added result in the console
+//                     // console.log(dbArticle);
+//                   })
+//                   .catch(function(err) {
+//                     // If an error occurred, log it
+//                     console.log(err);
+//                   });
+//               });
+//             });      
+   
+//   });
+
+module.exports = function(app) {
+    //hi
+    // A GET route for scraping the echoJS website
+  app.get("/scrape", function(req, res) {
+    console.log("Scraping IGN...")
+    axios.get("https://www.ign.com/articles").then(function(response) {
+      
+      var $ = cheerio.load(response.data);
+  
+      
+      $(".listElmnt-blogItem").each(function(i, element) {
+        
+        var result = {};
+  
+        // Add the text and href of every link, and save them as properties of the result object
+        result.title = $(element).children(".listElmnt-storyHeadline").text();
+        result.link = $(element).children(".listElmnt-storyHeadline").attr("href");
+        result.blurb = $(element).children("p").text();
+  
+        // Create a new Article using the `result` object built from scraping
+        db.Article.create(result)
+          .then(function(dbArticle) {
+            console.log(dbArticle);
+            
+          })
+          .catch(function(err) {
+            // If an error occurred, log it
+            console.log(err);
+          });
       });
-  },
-  wrongRoute: (req, res) => {
-      res.render(`404`);
-  },
-};
+    });   
+  
+      // Send a message to the client
+      res.send("Scrape Complete");
+    });
+  };
+
+// router.get("/scrape", function(req, res) {
+//     console.log("Scraping IGN...")
+//     axios.get("https://www.ign.com/articles").then(function(response) {
+      
+//       var $ = cheerio.load(response.data);
+  
+      
+//       $(".listElmnt-blogItem").each(function(i, element) {
+        
+//         var result = {};
+  
+//         // Add the text and href of every link, and save them as properties of the result object
+//         result.title = $(element).children(".listElmnt-storyHeadline").text();
+//         result.link = $(element).children(".listElmnt-storyHeadline").attr("href");
+//         result.blurb = $(element).children("p").text();
+  
+//         // Create a new Article using the `result` object built from scraping
+//         db.Article.create(result)
+//           .then(function(dbArticle) {
+//             console.log(dbArticle);
+            
+//           })
+//           .catch(function(err) {
+//             // If an error occurred, log it
+//             console.log(err);
+//           });
+//       });
+//     });      
+
+// });
+
+// module.exports = {
+//   index: (req, res) => {
+//       res.render("index", {
+//           message: "Hello There",
+//       });
+//   },
+// //   scrape: (req, res) => {
+    
+// // },
+//   wrongRoute: (req, res) => {
+//       res.render("404");
+//   },
+// };
 
 // //dependencies
 // var express = require('express');
